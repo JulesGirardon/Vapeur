@@ -153,3 +153,37 @@ startServer()
     .catch((err) => {
         console.error("Error during server initialization:", err);
     });
+
+
+//Liste des genres
+app.get('/genres', async (req, res) => {
+    const genres = await prisma.genre.findMany();
+    res.render('genres', { genres });
+});
+
+
+//Listes des jeu par genres
+app.get('/genre/:id/games', async (req, res) => {
+    const genreId = parseInt(req.params.id, 10);
+    const genre = await prisma.genre.findUnique({
+        where: { id: genreId },
+        include: { games: true },
+    });
+
+    if (!genre) {
+        return res.status(404).send('Genre not found');
+    }
+
+    res.render('games_genre', { genre });
+});
+
+
+//Ajouter un nouvel editeur
+app.post('/editors')
+
+
+//Liste des editeurs
+app.get('/editors', async (req, res) => {
+    const editors = await prisma.editor.findMany();
+    res.status(200).render('editors', { editors });
+})
