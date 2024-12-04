@@ -22,6 +22,7 @@ model Game {
   genreId     Int?
   editor      Editor?  @relation(fields: [editorId], references: [id])
   editorId    Int?
+  highlighted Boolean  @default(false)
 }
 
 model Genre {
