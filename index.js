@@ -300,3 +300,80 @@ startServer()
     .catch((err) => {
         console.error("Error during server initialization:", err);
     });
+
+
+//List of genres
+app.get('/genres', async (req, res) => {
+    const genres = await prisma.genre.findMany();
+    res.render('genres', { genres });
+});
+
+
+//List of games per genre
+app.get('/genre/:id/games', async (req, res) => {
+    const genreId = parseInt(req.params.id, 10);
+    const genre = await prisma.genre.findUnique({
+        where: { id: genreId },
+        include: { games: true },
+    });
+
+    if (!genre) {
+        return res.status(404).send('Genre not found');
+    }
+
+    res.render('games_genre', { genre });
+});
+
+
+//Add a new editor
+app.post('/editors', async (req, res) => {
+    const { name } = req.body;
+    await prisma.editor.create({ data: { name } });
+    res.redirect('/editors');
+})
+
+
+//List of editors
+app.get('/editors', async (req, res) => {
+    const editors = await prisma.editor.findMany();
+    res.status(200).render('editors', { editors });
+})
+
+
+//List of games for an editor
+app.get('/editor/:id/games', async (req, res) => {
+    const editorId = parseInt(req.params.id);
+    const games = await prisma.game.findUnique({
+        where: { id: editorId },
+    });
+
+    if (!editor) {
+        return res.status(404).send('Editor not found');
+    }
+
+    res.render('games_by_editor', { games });
+});
+
+// Update an editor
+app.post('/editor/:id/update', async (req, res) => {
+    const editorId = parseInt(req.params.id, 10);
+    const { name } = req.body;
+
+    await prisma.editor.update({
+        where: { id: editorId },
+        data: { name },
+    });
+
+    res.redirect('/editors');
+});
+
+// Delete an editor
+app.post('/editor/:id/delete', async (req, res) => {
+    const editorId = parseInt(req.params.id, 10);
+
+    await prisma.editor.delete({
+        where: { id: editorId },
+    });
+
+    res.redirect('/editors');
+});
