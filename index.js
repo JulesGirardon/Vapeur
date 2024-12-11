@@ -2,6 +2,7 @@ const express = require("express");
 const path = require("path");
 const hbs = require("hbs");
 const { PrismaClient } = require("@prisma/client");
+const methodOverride = require('method-override');
 
 /**
  * Initialise les genres dans le modèle Genre
@@ -58,13 +59,315 @@ const defaultGenres = ["Action", "Aventure", "RPG", "Simulation", "Sport", "MMOR
 
 app.set("view engine", "hbs"); // Permet d'utiliser les templates avec hbs
 app.set("views", path.join(__dirname, "views")); // Les templates sont dans le dossier views
+
 hbs.registerPartials(path.join(__dirname, "views", "partials")); // Permet d'utiliser les partials
+hbs.registerHelper('eq', function(a, b) {
+    return a === b ? 'selected' : '';
+});
 
 app.use(express.static("public"));
+app.use(express.json()); // Analyse les requêtes JSON
+app.use(express.urlencoded({ extended: true })); // Analyse les données encodées dans le corps des requêtes
+app.use(methodOverride('_method')); // Pour PUT, DELETE...
 
-app.get("/games/create", (req, res) => {
-    res.status(200).render("games/create");
+app.get("/", async (req, res) => {
+    try {
+        // Récupérer les jeux mis en avant
+        const highlighted_games = await prisma.game.findMany({
+            where: {
+                highlighted: true
+            }
+        });
+
+        // Rendre la page d'accueil avec les jeux mis en avant
+        res.status(200).render("index", { highlighted_games });
+    } catch (err) {
+        console.error(err);
+        res.status(500).render("error", { error: "Une erreur est survenue." });
+    }
 });
+
+// Affichage de la liste de tous les jeux
+app.get("/games", async (req, res) => {
+    try {
+        const games = await prisma.game.findMany();
+        res.status(200).render("games/index", { games });
+    } catch (error) {
+        console.error(error);
+        res.status(500).render("error", {error: "Une erreur est survenue."});
+    }
+});
+
+// Création d'un jeu : frontend
+app.get("/games/create", async (req, res) => {
+    try {
+        const genres = await prisma.genre.findMany();
+        const editors = await prisma.editor.findMany();
+        res.status(200).render("games/create", {genres, editors});
+    } catch (err) {
+        console.error(err);
+        res.status(500).render("error", {error: "Une erreur est survenue."});
+    }
+});
+
+// Création d'un jeu : backend
+app.post("/games/create", async (req, res) => {
+    try {
+        const gameData = req.body;
+
+        const genreExists = await prisma.genre.findUnique({
+            where: { id: parseInt(gameData.genre) },
+        });
+
+        if (!genreExists) {
+            throw new Error("Le genre spécifié n'existe pas.");
+        }
+/*
+        const editorExists = await prisma.editor.findUnique({
+            where: { id: parseInt(gameData.editor) },
+        });
+
+        if (!editorExists) {
+            throw new Error("L'éditeur spécifié n'existe pas.");
+        }*/
+
+        const game = await prisma.game.create({
+            data: {
+                title: gameData.title,
+                description: gameData.description,
+                releaseDate: new Date(gameData.date),
+                genre: {
+                    connect: { id: parseInt(gameData.genre) }
+                },
+                editor: {
+                    connect: { id: parseInt(gameData.editor) }
+                },
+                highlighted: gameData.highlighted === 'on'
+            },
+        });
+
+        const games = await prisma.game.findMany();
+
+        res.status(200).redirect("/games");
+    } catch (err) {
+        console.log(err);
+        res.status(500).render("error", {error: "Une erreur est survenue."});
+    }
+});
+
+// Affichage détails d'un jeu
+app.get("/games/:id/details", async (req, res) => {
+    try {
+        const game = await prisma.game.findUnique({
+            where: {
+                id: parseInt(req.params.id)
+            },
+            include: {
+                genre: true, // Cela inclut le genre associé au jeu
+                editor: true
+            }
+        });
+
+        if (!game) {
+            return res.status(404).render("error", { error: "Une erreur est survenue." });
+        }
+
+        const releaseDateFormatted = game.releaseDate.toISOString().split('T')[0];
+
+        res.status(200).render("games/details", { game, releaseDateFormatted });
+    } catch (err) {
+        console.error(err);
+        res.status(500).render("error", {error: "Une erreur est survenue."});
+    }
+});
+
+// Modification d'un jeu : frontend
+app.get("/games/:id/edit", async (req, res) => {
+    try {
+        const game = await prisma.game.findUnique({
+            where: { id: parseInt(req.params.id) }
+        });
+
+        if (!game) {
+            return res.status(404).render("error", { error: "Une erreur est survenue." });
+        }
+
+        const genres = await prisma.genre.findMany();
+        const editors = await prisma.editor.findMany();
+
+        if (!genres || !editors) {
+            return res.status(404).render("error", { error: "Une erreur est survenue." });
+        }
+
+        // Formater la date en format YYYY-MM-DD
+        const releaseDateFormatted = game.releaseDate.toISOString().split('T')[0];
+
+        res.render("games/edit", {
+            game,
+            genres,
+            editors,
+            releaseDate: releaseDateFormatted // Passe la date formatée à la vue
+        });
+    } catch (err) {
+        console.log(err);
+        res.status(500).render("error", { error: "Une erreur est survenue." });
+    }
+});
+
+
+
+// Modification d'un jeu : backend
+app.put("/games/:id/edit", async (req, res) => {
+    try {
+        const gameId = parseInt(req.params.id);
+        const { title, description, releaseDate, genre, editor, highlighted } = req.body;
+
+        // Vérifie si le jeu existe
+        const gameExists = await prisma.game.findUnique({
+            where: { id: gameId },
+        });
+
+        if (!gameExists) {
+            return res.status(404).render("error", { error: "Une erreur est survenue." });
+        }
+
+        // Vérifie si le genre et l'éditeur existent
+        const genreExists = await prisma.genre.findUnique({
+            where: { id: parseInt(genre) },
+        });
+
+        const editorExists = await prisma.editor.findUnique({
+            where: { id: parseInt(editor) },
+        });
+
+        if (!genreExists || !editorExists) {
+            return res.status(404).render("error", { error: "Une erreur est survenue." });
+        }
+
+        // Met à jour le jeu
+        await prisma.game.update({
+            where: { id: gameId },
+            data: {
+                title,
+                description,
+                releaseDate: new Date(releaseDate),
+                genre: { connect: { id: parseInt(genre) } },
+                editor: { connect: { id: parseInt(editor) } },
+                highlighted: highlighted === 'on' // Permet de convertir une valeur en booléan explicite
+            },
+        });
+
+        res.status(200).redirect(`/games/${gameId}/details`);
+    } catch (error) {
+        console.error(error);
+        res.status(500).render("error", { error: "Une erreur est survenue." });
+    }
+});
+
+// Suppression d'un jeu
+app.delete("/games/:id/delete", async (req, res) => {
+    try {
+        const gameId = parseInt(req.params.id);
+
+        const gameExists = await prisma.game.findUnique({
+            where: { id: gameId },
+        });
+
+        if (!gameExists) {
+            return res.status(404).json({ error: "Jeu introuvable." });
+        }
+
+        await prisma.game.delete({
+            where: { id: gameId },
+        });
+
+        res.status(200).redirect("/games");
+    } catch (error) {
+        console.error(error);
+        res.status(500).render("error", { error: "Une erreur est survenue." });
+    }
+});
+
+//List of genres
+app.get('/genres', async (req, res) => {
+    const genres = await prisma.genre.findMany();
+    res.render('genres', { genres });
+});
+
+
+//List of games per genre
+app.get('/genre/:id/games', async (req, res) => {
+    const genreId = parseInt(req.params.id, 10);
+    const genre = await prisma.genre.findUnique({
+        where: { id: genreId },
+        include: { games: true },
+    });
+
+    if (!genre) {
+        return res.status(404).send('Genre not found');
+    }
+
+    res.render('games_genre', { genre });
+});
+
+
+//Add a new editor
+app.post('/editors', async (req, res) => {
+    const { name } = req.body;
+    await prisma.editor.create({ data: { name } });
+    res.redirect('/editors');
+})
+
+
+//List of editors
+app.get('/editors', async (req, res) => {
+    const editors = await prisma.editor.findMany();
+    res.status(200).render('editors', { editors });
+})
+
+
+//List of games for an editor
+app.get('/editor/:id/games', async (req, res) => {
+    const editorId = parseInt(req.params.id);
+    const games = await prisma.game.findUnique({
+        where: { id: editorId },
+    });
+
+    if (!editor) {
+        return res.status(404).send('Editor not found');
+    }
+
+    res.render('games_by_editor', { games });
+});
+
+// Update an editor
+app.post('/editor/:id/update', async (req, res) => {
+    const editorId = parseInt(req.params.id, 10);
+    const { name } = req.body;
+
+    await prisma.editor.update({
+        where: { id: editorId },
+        data: { name },
+    });
+
+    res.redirect('/editors');
+});
+
+// Delete an editor
+app.post('/editor/:id/delete', async (req, res) => {
+    const editorId = parseInt(req.params.id, 10);
+
+    await prisma.editor.delete({
+        where: { id: editorId },
+    });
+
+    res.redirect('/editors');
+});
+
+
+app.get("*", (req, res) => {
+    res.status(404).render("404");
+})
 
 app.use((err, req, res, next) => {
     console.error(err.stack);
@@ -73,7 +376,7 @@ app.use((err, req, res, next) => {
 
 startServer()
     .then((req) => {
-        console.log(req);
+        console.log("Starting server...");
     })
     .catch((err) => {
         console.error("Error during server initialization:", err);

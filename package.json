@@ -13,9 +13,10 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@prisma/client": "^6.0.0",
+    "@prisma/client": "^6.0.1",
     "express": "^4.21.1",
     "hbs": "^4.2.0",
+    "method-override": "^3.0.0",
     "prisma": "^6.0.0",
     "sqlite3": "^5.1.7"
   },

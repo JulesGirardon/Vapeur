@@ -18,20 +18,21 @@ model Game {
   title       String   @unique
   description String
   releaseDate DateTime
-  genre       Genre[]
-  editor      Editor[]
+  genre       Genre?   @relation(fields: [genreId], references: [id])
+  genreId     Int?
+  editor      Editor?  @relation(fields: [editorId], references: [id])
+  editorId    Int?
+  highlighted Boolean  @default(false)
 }
 
 model Genre {
-  id      Int    @id @default(autoincrement())
-  name    String
-  games   Game?  @relation(fields: [gamesId], references: [id])
-  gamesId Int?
+  id    Int    @id @default(autoincrement())
+  name  String
+  games Game[]
 }
 
 model Editor {
-  id      Int    @id @default(autoincrement())
-  name    String
-  games   Game?  @relation(fields: [gamesId], references: [id])
-  gamesId Int?
+  id    Int    @id @default(autoincrement())
+  name  String
+  games Game[]
 }

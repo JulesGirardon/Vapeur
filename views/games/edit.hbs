@@ -1,0 +1,34 @@
+<h1>Modifier le jeu : {{game.title}}</h1>
+<form id="editForm" action="/games/{{game.id}}/edit?_method=PUT" method="POST">
+    <label for="title">Titre :</label>
+    <input type="text" id="title" name="title" value="{{game.title}}" required>
+
+    <label for="description">Description :</label>
+    <textarea id="description" name="description" required>{{game.description}}</textarea>
+
+    <label for="releaseDate">Date de sortie :</label>
+    <input type="date" id="releaseDate" name="releaseDate" value="{{releaseDate}}" required>
+
+    <label for="genre">Genre :</label>
+    <select id="genre" name="genre">
+        {{#each genres}}
+            <option value="{{this.id}}" {{eq this.id ../game.genreId}}> <!-- ../ pour avoir élément parent car on est dans une boucle-->
+                {{this.name}}
+            </option>
+        {{/each}}
+    </select>
+
+    <label for="editor">Editeur :</label>
+    <select id="editor" name="editor">
+        {{#each editors}}
+            <option value="{{this.id}}" {{eq this.id ../game.editorId}}>
+                {{this.name}}
+            </option>
+        {{/each}}
+    </select>
+
+    <label for="create-game-highlighted">Mettre le jeu en avant</label>
+    <input type="checkbox" id="create-game-highlighted" name="highlighted" {{#if game.highlighted}}checked{{/if}}>
+
+    <button type="submit">Mettre à jour</button>
+</form>
