@@ -102,8 +102,8 @@ app.get("/games", async (req, res) => {
 app.get("/games/create", async (req, res) => {
     try {
         const genres = await prisma.genre.findMany();
-        const editor = await prisma.editor.findMany();
-        res.status(200).render("games/create", {genres, editor});
+        const editors = await prisma.editor.findMany();
+        res.status(200).render("games/create", {genres, editors});
     } catch (err) {
         console.error(err);
         res.status(500).render("error", {error: "Une erreur est survenue."});
@@ -138,10 +138,10 @@ app.post("/games/create", async (req, res) => {
                 releaseDate: new Date(gameData.date),
                 genre: {
                     connect: { id: parseInt(gameData.genre) }
-                },/*
+                },
                 editor: {
                     connect: { id: parseInt(gameData.editor) }
-                },*/
+                },
                 highlighted: gameData.highlighted === 'on'
             },
         });
@@ -193,7 +193,9 @@ app.get("/games/:id/edit", async (req, res) => {
         }
 
         const genres = await prisma.genre.findMany();
-        if (!genres) {
+        const editors = await prisma.editor.findMany();
+
+        if (!genres || !editors) {
             return res.status(404).render("error", { error: "Une erreur est survenue." });
         }
 
@@ -203,6 +205,7 @@ app.get("/games/:id/edit", async (req, res) => {
         res.render("games/edit", {
             game,
             genres,
+            editors,
             releaseDate: releaseDateFormatted // Passe la date formatée à la vue
         });
     } catch (err) {
@@ -232,13 +235,14 @@ app.put("/games/:id/edit", async (req, res) => {
         const genreExists = await prisma.genre.findUnique({
             where: { id: parseInt(genre) },
         });
-        /*const editorExists = await prisma.editor.findUnique({
+
+        const editorExists = await prisma.editor.findUnique({
             where: { id: parseInt(editor) },
         });
 
         if (!genreExists || !editorExists) {
             return res.status(404).render("error", { error: "Une erreur est survenue." });
-        }*/
+        }
 
         // Met à jour le jeu
         await prisma.game.update({
@@ -248,7 +252,7 @@ app.put("/games/:id/edit", async (req, res) => {
                 description,
                 releaseDate: new Date(releaseDate),
                 genre: { connect: { id: parseInt(genre) } },
-                //editor: { connect: { id: parseInt(editor) } },
+                editor: { connect: { id: parseInt(editor) } },
                 highlighted: highlighted === 'on' // Permet de convertir une valeur en booléan explicite
             },
         });
@@ -283,24 +287,6 @@ app.delete("/games/:id/delete", async (req, res) => {
         res.status(500).render("error", { error: "Une erreur est survenue." });
     }
 });
-
-app.get("*", (req, res) => {
-    res.status(404).render("404");
-})
-
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).send("Quelque chose s'est mal passé !");
-});
-
-startServer()
-    .then((req) => {
-        console.log("Starting server...");
-    })
-    .catch((err) => {
-        console.error("Error during server initialization:", err);
-    });
-
 
 //List of genres
 app.get('/genres', async (req, res) => {
@@ -377,3 +363,21 @@ app.post('/editor/:id/delete', async (req, res) => {
 
     res.redirect('/editors');
 });
+
+
+app.get("*", (req, res) => {
+    res.status(404).render("404");
+})
+
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send("Quelque chose s'est mal passé !");
+});
+
+startServer()
+    .then((req) => {
+        console.log("Starting server...");
+    })
+    .catch((err) => {
+        console.error("Error during server initialization:", err);
+    });
