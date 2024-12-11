@@ -59,9 +59,12 @@
         <tr>
             <td>{{game.title}}</td>
             <td>{{game.description}}</td>
-            <td>{{game.releaseDate}}</td>
-            <td>{{game.genre}}</td>
-            <td>{{game.editor}}</td>
+            <td>{{releaseDateFormatted}}</td>
+            <td>{{game.genre.name}}</td>
+            <td>{{game.editor.name}}</td>
         </tr>
     </tbody>
 </table>
+
+{{>games/edit edit_text="Editer" game=game}}
+{{>games/delete game=game}}
