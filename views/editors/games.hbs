@@ -1,7 +1,7 @@
 <div class="list-games">
-    <a href="games/create" class="create-game">Ajouter un jeu</a>
+    <a href="/editors" class="back-editors">Revenir à la liste des éditeurs</a>
     <ul>
-        {{#each games}}
+        {{#each editor.games}}
             <li>
                 <!-- Affichage de l'image du jeu -->
                 {{#if image}} <!-- Vérifie si une image existe pour le jeu -->
@@ -14,3 +14,4 @@
         {{/each}}
     </ul>
 </div>
+
