@@ -18,11 +18,12 @@ model Game {
   title       String   @unique
   description String
   releaseDate DateTime
-  genre       Genre?   @relation(fields: [genreId], references: [id])
+  genre       Genre?   @relation(fields: [genreId], references: [id]) // Associé un genre à un jeu
   genreId     Int?
-  editor      Editor?  @relation(fields: [editorId], references: [id])
+  editor      Editor?  @relation(fields: [editorId], references: [id]) // Associé un éditeur à un jeu
   editorId    Int?
-  highlighted Boolean  @default(false)
+  highlighted Boolean  @default(false) // Savoir si le jeu est mis en avant
+  image       String? // Image associé au jeu
 }
 
 model Genre {

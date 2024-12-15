@@ -1,7 +1,7 @@
 <div class="list-games">
-    <a href="games/create" class="create-game">Ajouter un jeu</a>
+    <a href="/genres" class="create-game">Revenir à la liste des genres</a>
     <ul>
-        {{#each games}}
+        {{#each genre.games}}
             <li>
                 <!-- Affichage de l'image du jeu -->
                 {{#if image}} <!-- Vérifie si une image existe pour le jeu -->

@@ -1,0 +1,78 @@
+<div class="form-game-div">
+    <form class="form-game" method="post" action="{{#if game}}/games/{{game.id}}/edit?_method=PUT{{else}}/games/create{{/if}}" enctype="multipart/form-data">
+        <label for="form_game_title">Titre</label>
+        <input
+                type="text"
+                id="form_game_title"
+                name="title"
+                placeholder="Titre de jeu"
+                value="{{#if game}}{{game.title}}{{/if}}"
+                required
+        >
+
+        <label for="form_game_description">Description</label>
+        <input
+                type="text"
+                id="form_game_description"
+                name="description"
+                placeholder="Description de jeu"
+                value="{{#if game}}{{game.description}}{{/if}}"
+                required
+        >
+
+        <label for="form_game_date">Date de sortie</label>
+        <input
+                type="date"
+                id="form_game_date"
+                name="releaseDate"
+                placeholder="Date de jeu"
+                value="{{#if releaseDate}}{{releaseDate}}{{/if}}"
+                required
+        >
+
+        <label for="form_game_genre">Genre</label>
+        <select id="form_game_genre" name="genre">
+            {{#each genres}}
+                <option
+                        value="{{id}}"
+                        {{#if (eq id ../game.genre.id)}}selected{{/if}}
+                >
+                    {{name}}
+                </option>
+            {{/each}}
+        </select>
+
+        <label for="form_game_editor">Editeur</label>
+        <select id="form_game_editor" name="editor">
+            {{#each editors}}
+                <option
+                        value="{{id}}"
+                        {{#if (eq id ../game.editor.id)}}selected{{/if}}
+                >
+                    {{name}}
+                </option>
+            {{/each}}
+        </select>
+
+        <label for="form_game_highlighted">
+            <input
+                    type="checkbox"
+                    id="form_game_highlighted"
+                    name="highlighted"
+                    {{#if game.highlighted}}checked{{/if}}
+            >
+            Mettre le jeu en avant
+        </label>
+
+        <label for="form_game_image">Image du jeu</label>
+        <input
+                type="file"
+                id="form_game_image"
+                name="image"
+                accept="image/*"
+        >
+
+        <button type="submit">Créer le jeu</button>
+    </form>
+
+</div>

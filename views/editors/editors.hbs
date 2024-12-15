@@ -1,0 +1,31 @@
+<div class="list-editors">
+    <!-- Formulaire pour ajouter un éditeur -->
+    <form action="/editors" method="POST" class="form-editor">
+        <input type="text" name="name" placeholder="Nom de l'éditeur" required />
+        <button type="submit">Ajouter l'éditeur</button>
+    </form>
+
+    <!-- Liste des éditeurs existants -->
+    <ul class="editors-list">
+        {{#each editors}}
+            <li class="editor-item">
+                <!-- Nom de l'éditeur -->
+                <span class="editor-name">{{this.name}}</span>
+
+                <!-- Formulaire pour mettre à jour le nom de l'éditeur -->
+                <form action="/editors/{{this.id}}/update?_method=PUT" method="POST" class="form-update" style="display:inline;">
+                    <input type="text" name="name" placeholder="Nouveau nom" required />
+                    <button type="submit">Mettre à jour</button>
+                </form>
+
+                <!-- Formulaire pour supprimer l'éditeur -->
+                <form action="/editors/{{this.id}}/delete?_method=DELETE" method="POST" class="form-delete" style="display:inline;">
+                    <button type="submit">Supprimer</button>
+                </form>
+
+                <!-- Lien pour voir les jeux de cet éditeur -->
+                <a href="/editors/{{this.id}}/games" class="view-games-link">Voir les jeux</a>
+            </li>
+        {{/each}}
+    </ul>
+</div>
