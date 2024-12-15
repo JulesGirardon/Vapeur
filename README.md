@@ -21,7 +21,7 @@ Avant de démarrer, assurez-vous d'avoir installé les outils suivants sur votre
 
 1. Clonez ce dépôt sur votre machine locale :
     ```bash
-    git clone https://github.com/votre-utilisateur/vapeur.git
+    git clone https://github.com/JulesGirardon/vapeur.git
     cd vapeur
     ```
 
@@ -63,8 +63,11 @@ vapeur/
 │   ├── schema.prisma       # Schéma de la base de données Prisma
 ├── views/                  # Dossier contenant les vues Handlebars
 │   ├── partials/           # Partiels Handlebars
+│   │   ├── games/          # Partiels pour les jeux
+│   ├── 404.hbs             # Vue pour les pages inconnues
 │   ├── error.hbs           # Vue pour les erreurs
 │   ├── index.hbs           # Page d'accueil
+│   ├── layout.hbs          # Layout du site
 │   ├── games/              # Vues pour la gestion des jeux
 │   ├── genres/             # Vues pour la gestion des genres
 │   └── editors/            # Vues pour la gestion des éditeurs
