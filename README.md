@@ -106,3 +106,65 @@ Les images des jeux sont téléchargées via **Multer** et stockées dans le dos
 - **Handlebars (hbs)** : Moteur de template pour générer des vues HTML dynamiques.
 - **Multer** : Middleware pour la gestion du téléchargement de fichiers.
 - **Method-Override** : Middleware pour simuler des requêtes PUT et DELETE.
+
+## Routes de l'application
+
+### 1. **Page d'accueil**
+- **GET** `/`
+- Affiche les jeux mis en avant.
+  
+### 2. **Liste des jeux**
+- **GET** `/games`
+- Affiche la liste de tous les jeux.
+
+### 3. **Créer un jeu**
+- **GET** `/games/create`
+  - Affiche le formulaire pour créer un jeu (avec les genres et éditeurs disponibles).
+- **POST** `/games/create`
+  - Crée un nouveau jeu avec les informations envoyées depuis le formulaire. Gère l'upload d'image pour le jeu.
+
+### 4. **Détails d'un jeu**
+- **GET** `/games/:id/details`
+  - Affiche les détails d'un jeu spécifique, y compris le genre et l'éditeur associés.
+
+### 5. **Modifier un jeu**
+- **GET** `/games/:id/edit`
+  - Affiche le formulaire pour modifier un jeu existant.
+- **PUT** `/games/:id/edit`
+  - Met à jour un jeu avec les nouvelles informations envoyées depuis le formulaire. Permet aussi de mettre à jour l'image du jeu.
+
+### 6. **Supprimer un jeu**
+- **DELETE** `/games/:id/delete`
+  - Supprime un jeu de la base de données ainsi que son image associée.
+
+### 7. **Liste des genres**
+- **GET** `/genres`
+  - Affiche la liste de tous les genres de jeux.
+
+### 8. **Liste des jeux par genre**
+- **GET** `/genres/:id/games`
+  - Affiche les jeux associés à un genre spécifique.
+
+### 9. **Liste des éditeurs**
+- **GET** `/editors`
+  - Affiche la liste de tous les éditeurs.
+
+### 10. **Liste des jeux par éditeur**
+- **GET** `/editors/:id/games`
+  - Affiche les jeux associés à un éditeur spécifique.
+
+### 11. **Ajouter un éditeur**
+- **POST** `/editors`
+  - Crée un nouvel éditeur avec le nom fourni dans le formulaire.
+
+### 12. **Mettre à jour un éditeur**
+- **PUT** `/editors/:id/update`
+  - Met à jour le nom d'un éditeur existant.
+
+### 13. **Supprimer un éditeur**
+- **DELETE** `/editors/:id/delete`
+  - Supprime un éditeur de la base de données.
+
+### 14. **Page d'erreur 404**
+- **GET** `*`
+  - Route pour gérer les pages non trouvées (erreur 404).
