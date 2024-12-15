@@ -29,16 +29,35 @@ Avant de démarrer, assurez-vous d'avoir installé les outils suivants sur votre
     ```bash
     npm install
     ```
-
-3. Créez un fichier `.env` à la racine du projet avec la variable suivante :
-
+    
+3. Initialiser Prisma : Si Prisma n'a pas encore été initialisé dans le projet, fais-le avec cette commande :
+    ```bash
+    npx prisma init
+    ```
+    
+4. Créez un fichier `.env` à la racine du projet avec la variable suivante :
     ```env
     DATABASE_URL="file:./database.db"
     ```
 
     Cela configure la connexion à la base de données SQLite.
 
-4. Assurez-vous que le dossier `uploads/` existe pour stocker les images des jeux. Si ce dossier n'existe pas, vous pouvez le créer manuellement ou il sera créé automatiquement lors du premier téléchargement d'une image.
+5. Créer la base de données : Si tu n'as pas encore de base de données SQLite ou si tu veux appliquer le schéma, tu peux exécuter la migration initiale avec la commande suivante :
+    ```bash
+    npx prisma migrate dev --name init
+    ```
+
+6. Générer le client Prisma : Si tu as modifié le schéma de la base de données, tu dois générer le client Prisma pour pouvoir l'utiliser dans ton application :
+   ```bash
+   npx prisma generate
+   ```
+   
+7. Vérifier la base de données : Pour vérifier que la base de données est correctement configurée, tu peux utiliser la commande suivante pour inspecter les données :
+   ```bash
+   npx prisma studio
+   ```
+
+8. Assurez-vous que le dossier `uploads/` existe pour stocker les images des jeux. Si ce dossier n'existe pas, vous pouvez le créer manuellement ou il sera créé automatiquement lors du premier téléchargement d'une image.
 
 ## Lancer l'application
 
