@@ -6,6 +6,13 @@ const methodOverride = require('method-override');
 const multer = require('multer');
 const fs = require('fs');
 
+// Initialisation de Prisma
+const prisma = new PrismaClient();
+const app = express();
+const PORT = 44000;
+
+const defaultGenres = ["Action", "Aventure", "RPG", "Simulation", "Sport", "MMORPG"];
+
 /**
  * Initialise les genres dans le modèle Genre
  *
@@ -57,12 +64,6 @@ async function startServer() {
     }
 }
 
-const prisma = new PrismaClient();
-const app = express();
-const PORT = 3008;
-
-const defaultGenres = ["Action", "Aventure", "RPG", "Simulation", "Sport", "MMORPG"];
-
 app.set("view engine", "hbs"); // Permet d'utiliser les templates avec hbs
 app.set("views", path.join(__dirname, "views")); // Les templates sont dans le dossier views
 
@@ -110,10 +111,7 @@ const fileFilter = (req, file, cb) => {
     }
 };
 
-const upload = multer({
-    storage: storage,
-    fileFilter: fileFilter
-});
+const upload = multer({ storage, fileFilter });
 app.use('/uploads', express.static('uploads'));
 
 // Vérifie que le dossier uploads existe et création du dossier si besoin
@@ -149,7 +147,7 @@ app.get("/games", async (req, res) => {
         res.status(200).render("games/index", { games, title: "Liste des jeux" });
     } catch (error) {
         console.error(error);
-        res.status(500).render("error", {error: "Une erreur est survenue.", title: "Erreur"});
+        res.status(500).render("error", { error: "Une erreur est survenue.", title: "Erreur"});
     }
 });
 
@@ -165,7 +163,7 @@ app.get("/games/create", async (req, res) => {
         res.status(200).render("games/create", {genres, editors, title: "Créer un jeu"});
     } catch (err) {
         console.error(err);
-        res.status(500).render("error", {error: "Une erreur est survenue.", title: "Erreur"});
+        res.status(500).render("error", { error: "Une erreur est survenue.", title: "Erreur"});
     }
 });
 
@@ -215,7 +213,7 @@ app.post("/games/create", upload.single('image'), async (req, res) => {
         res.status(200).redirect("/games");
     } catch (err) {
         console.log(err);
-        res.status(500).render("error", {error: "Une erreur est survenue.", title: "Erreur"});
+        res.status(500).render("error", { error: "Une erreur est survenue.", title: "Erreur" });
     }
 });
 
@@ -246,7 +244,7 @@ app.get("/games/:id/details", async (req, res) => {
         res.status(200).render("games/details", { game, releaseDateFormatted, title: game.title });
     } catch (err) {
         console.error(err);
-        res.status(500).render("error", {error: "Une erreur est survenue.", title: "Erreur"});
+        res.status(500).render("error", { error: "Une erreur est survenue.", title: "Erreur" });
     }
 });
 
@@ -553,7 +551,7 @@ app.get("*", (req, res) => {
 // Middleware pour gérer les erreurs
 app.use((err, req, res, next) => {
     console.error(err.stack);
-    res.status(500).send("Quelque chose s'est mal passé !");
+    res.status(500).render("error", { error: "Une erreur est survenue.", title: "Erreur" });
 });
 
 startServer()
