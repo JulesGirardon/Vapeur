@@ -9,9 +9,9 @@
   },
   "private": true,
   "keywords": [],
-  "author": "",
+  "author": "Jules Girardon, Eudes Charlot, Lucas Vial",
   "license": "ISC",
-  "description": "",
+  "description": "Vapeur, une application web qui permet de gérer une collection de jeux vidéo",
   "dependencies": {
     "@prisma/client": "^6.0.1",
     "express": "^4.21.1",
@@ -23,7 +23,7 @@
     "sqlite3": "^5.1.7"
   },
   "devDependencies": {
-    "nodemon": "^3.1.9"
+    "nodemon": "^3.1.7"
   },
   "nodemonConfig": {
     "ext": "js, mjs, cjs, json, hbs"
