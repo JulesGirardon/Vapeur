@@ -189,6 +189,7 @@ Les images des jeux sont téléchargées via **Multer** et stockées dans le dos
   - Route pour gérer les pages non trouvées (erreur 404).
 
  ## Membres du projet
-- [https://github.com/JulesGirardon](Jules Girardon)
-- [https://github.com/JulesGirardon](Eudes Charlot)
-- [https://github.com/Lumo6](Lucas Vial)
+- [Jules Girardon](https://github.com/JulesGirardon)
+- [Eudes Charlot](https://github.com/JulesGirardon)
+- [Lucas Vial](https://github.com/Lumo6)
+
