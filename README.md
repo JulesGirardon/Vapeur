@@ -190,6 +190,6 @@ Les images des jeux sont téléchargées via **Multer** et stockées dans le dos
 
  ## Membres du projet
 - [Jules Girardon](https://github.com/JulesGirardon)
-- [Eudes Charlot](https://github.com/JulesGirardon)
+- [Eudes Charlot](https://github.com/EudesCharlot)
 - [Lucas Vial](https://github.com/Lumo6)
 
