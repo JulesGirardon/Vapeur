@@ -160,6 +160,11 @@ app.get("/games/create", async (req, res) => {
         const editors = await prisma.editor.findMany({
             orderBy: { name: 'asc' }
         });
+
+        if(editors.length === 0) {
+            res.status(403).render("error", { error: "Vous devez avoir des éditeurs pour créer un jeu.", title: "Erreur"});
+        }
+
         res.status(200).render("games/create", {genres, editors, title: "Créer un jeu"});
     } catch (err) {
         console.error(err);
