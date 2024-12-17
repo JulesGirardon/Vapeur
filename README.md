@@ -83,13 +83,12 @@ vapeur/
 ├── views/                  # Dossier contenant les vues Handlebars
 │   ├── partials/           # Partiels Handlebars
 │   │   ├── games/          # Partiels pour les jeux
-│   ├── 404.hbs             # Vue pour les pages inconnues
-│   ├── error.hbs           # Vue pour les erreurs
 │   ├── index.hbs           # Page d'accueil
 │   ├── layout.hbs          # Layout du site
 │   ├── games/              # Vues pour la gestion des jeux
 │   ├── genres/             # Vues pour la gestion des genres
-│   └── editors/            # Vues pour la gestion des éditeurs
+│   ├── editors/            # Vues pour la gestion des éditeurs
+|   └── errors/             # Vues pour la gestion des erreurs
 ├── public/                 # Dossier pour les ressources statiques (CSS, JS, images)
 ├── .env                    # Fichier de configuration de l'environnement
 ├── package.json            # Dépendances et scripts du projet
