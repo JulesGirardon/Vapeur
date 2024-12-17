@@ -146,3 +146,13 @@ gameItems.forEach((gameItem) => {
         setActiveItem(gamesNavItem); // Appliquer l'état actif à l'élément "Jeux"
     });
 });
+
+const addGameLink = document.querySelector('.create-game');
+
+// Ajouter un événement de clic pour appliquer l'état actif au menu "Jeux"
+if (addGameLink) {
+    addGameLink.addEventListener('click', () => {
+        const gamesNavItem = document.getElementById('sidebar-nav-item-games'); // Récupérer l'élément "Jeux"
+        setActiveItem(gamesNavItem); // Appliquer l'état actif à l'élément "Jeux"
+    });
+}

@@ -32,7 +32,14 @@
                 <td data-label="Description">{{game.description}}</td>
                 <td data-label="Date de sortie">{{releaseDateFormatted}}</td>
                 <td data-label="Genre"><a href="/genres/{{game.genre.id}}/games">{{game.genre.name}}</a></td>
-                <td data-label="Editeur"><a href="/editors/{{game.editor.id}}/games" class="games-details-editor">{{game.editor.name}}</a></td>
+                <td data-label="Editeur">
+                    {{#if game.editor}}
+                        <a href="/editors/{{game.editor.id}}/games" class="games-details-editor">{{game.editor.name}}</a>
+                    {{else}}
+                        L'éditeur n'est plus disponible
+                    {{/if}}
+
+                </td>
             </tr>
             </tbody>
 

@@ -165,7 +165,7 @@ app.get("/games/create", async (req, res) => {
             return res.status(403).render("errors/error", { error: "Vous devez ajouter des éditeurs pour pouvoir ajouter des jeux", title: "Erreur"});
         }
 
-        res.status(200).render("games/create", {genres, editors, title: "Créer un jeu"});
+        res.status(200).render("games/create", {genres, editors, title: "Créer un jeu", text_action: "Créer le jeu"});
     } catch (err) {
         console.error(err);
         return res.status(500).render("errors/error", { error: "Une erreur est survenue.", title: "Erreur"});
@@ -291,7 +291,8 @@ app.get("/games/:id/edit", async (req, res) => {
             genres,
             editors,
             releaseDate: releaseDateFormatted, // Passe la date formatée à la vue
-            title: "Editeur de jeu"
+            title: "Editeur de jeu",
+            text_action: "Editer le jeu"
         });
     } catch (err) {
         console.log(err);
@@ -305,7 +306,7 @@ app.put("/games/:id/edit", upload.single('image'), async (req, res) => {
         const gameId = parseInt(req.params.id);
         const { title, description, releaseDate, genre, editor, highlighted } = req.body;
         const genreId = parseInt(genre);
-        const editorId = parseInt(editor);
+        const editorId = editor ? parseInt(editor) : null; // Si editor est fourni, on le convertit en entier, sinon on le laisse null. Cas où l'on supprime un éditeur qui possède des jeux
 
         // Vérifie si le jeu existe
         const gameExists = await prisma.game.findUnique({
@@ -321,9 +322,13 @@ app.put("/games/:id/edit", upload.single('image'), async (req, res) => {
             where: { id: genreId },
         });
 
-        const editorExists = await prisma.editor.findUnique({
-            where: { id: editorId },
-        });
+        // Si l'éditeur est fourni, on vérifie qu'il existe
+        let editorExists = true; // On assume que l'éditeur est valide si l'input est vide
+        if (editorId) {
+            editorExists = await prisma.editor.findUnique({
+                where: { id: editorId },
+            });
+        }
 
         if (!genreExists || !editorExists) {
             return res.status(404).render("errors/error", { error: "Genre ou éditeur non trouvé.", title: "Erreur" });
@@ -360,7 +365,7 @@ app.put("/games/:id/edit", upload.single('image'), async (req, res) => {
                 description,
                 releaseDate: new Date(releaseDate),
                 genre: { connect: { id: genreId } },
-                editor: { connect: { id: editorId } },
+                editor: editorId ? { connect: { id: editorId } } : undefined, // Si editorId est fourni, on le connecte, sinon on l'ignore
                 highlighted: highlighted === 'on',
                 image: imagePath, // Met à jour l'image
             },
