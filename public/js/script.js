@@ -168,8 +168,9 @@ if (backToGenre) {
 
 const gameEditor = document.querySelector('.game-editor');
 
-if (gameEditor) {
+if (gameEditor && gameEditor.textContent.trim() !== "L'éditeur n'est plus disponible") {
     gameEditor.addEventListener('click', () => {
+        console.log(gameEditor.textContent);
         const gamesNavItem = document.getElementById('sidebar-nav-item-editors'); // Récupérer l'élément "Editeurs"
         setActiveItem(gamesNavItem); // Appliquer l'état actif à l'élément "Jeux"
     });

@@ -35,7 +35,7 @@
             {{#each genres}}
                 <option
                         value="{{id}}"
-                        {{#if (eq id ../game.genre.id)}}selected{{/if}}
+                        {{#if (eq id ../game.genreId)}}selected{{/if}}
                 >
                     {{name}}
                 </option>
@@ -47,7 +47,7 @@
             {{#each editors}}
                 <option
                         value="{{id}}"
-                        {{#if (eq id ../game.editor.id)}}selected{{/if}}
+                        {{#if (eq id ../game.editorId)}}selected{{/if}}
                 >
                     {{name}}
                 </option>
