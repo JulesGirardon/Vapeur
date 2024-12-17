@@ -136,3 +136,13 @@ sidebarTitle.addEventListener('click', () => {
     const homeItem = document.getElementById('sidebar-nav-item-home'); // Récupérer l'élément Accueil
     setActiveItem(homeItem); // Appliquer l'état actif à cet élément
 });
+
+const gameItems = document.querySelectorAll('.list-games ul li a');
+
+// Appliquer l'état actif au menu "Jeu" quand un élément de la liste des jeux est cliqué
+gameItems.forEach((gameItem) => {
+    gameItem.addEventListener('click', () => {
+        const gamesNavItem = document.getElementById('sidebar-nav-item-games'); // Récupérer l'élément "Jeux"
+        setActiveItem(gamesNavItem); // Appliquer l'état actif à l'élément "Jeux"
+    });
+});
