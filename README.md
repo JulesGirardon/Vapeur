@@ -67,7 +67,7 @@ Pour démarrer l'application en mode développement, utilisez la commande suivan
 npm start
 ```
 
-L'application sera accessible sur `http://localhost:3008`.
+L'application sera accessible sur `http://localhost:44000`.
 
 ## Structure du projet
 
