@@ -35,5 +35,5 @@ model Genre {
 model Editor {
   id    Int    @id @default(autoincrement())
   name  String
-  gaà)mes Game[]
+  games Game[]
 }
