@@ -134,7 +134,7 @@ app.get("/", async (req, res) => {
         res.status(200).render("index", { highlighted_games, title: "Jeux mis en avant" });
     } catch (err) {
         console.error(err);
-        res.status(500).render("error", { error: "Une erreur est survenue.", title: "Erreur" });
+        res.status(500).render("errors/error", { error: "Une erreur est survenue.", title: "Erreur" });
     }
 });
 
@@ -147,7 +147,7 @@ app.get("/games", async (req, res) => {
         res.status(200).render("games/index", { games, title: "Liste des jeux" });
     } catch (error) {
         console.error(error);
-        res.status(500).render("error", { error: "Une erreur est survenue.", title: "Erreur"});
+        res.status(500).render("errors/error", { error: "Une erreur est survenue.", title: "Erreur"});
     }
 });
 
@@ -162,13 +162,13 @@ app.get("/games/create", async (req, res) => {
         });
 
         if(editors.length === 0) {
-            res.status(403).render("error", { error: "Vous devez avoir des éditeurs pour créer un jeu.", title: "Erreur"});
+            return res.status(403).render("errors/error", { error: "Vous devez ajouter des éditeurs pour pouvoir ajouter des jeux", title: "Erreur"});
         }
 
         res.status(200).render("games/create", {genres, editors, title: "Créer un jeu"});
     } catch (err) {
         console.error(err);
-        res.status(500).render("error", { error: "Une erreur est survenue.", title: "Erreur"});
+        return res.status(500).render("errors/error", { error: "Une erreur est survenue.", title: "Erreur"});
     }
 });
 
@@ -218,7 +218,7 @@ app.post("/games/create", upload.single('image'), async (req, res) => {
         res.status(200).redirect("/games");
     } catch (err) {
         console.log(err);
-        res.status(500).render("error", { error: "Une erreur est survenue.", title: "Erreur" });
+        return res.status(500).render("errors/error", { error: "Une erreur est survenue.", title: "Erreur" });
     }
 });
 
@@ -237,7 +237,7 @@ app.get("/games/:id/details", async (req, res) => {
         });
 
         if (!game) {
-            return res.status(404).render("error", { error: "Le jeu n'existe pas.", title: "Erreur" });
+            return res.status(404).render("errors/error", { error: "Le jeu n'existe pas.", title: "Erreur" });
         }
 
         // Formate la date de sortie du jeu en format "YYYY-MM-DD".
@@ -249,7 +249,7 @@ app.get("/games/:id/details", async (req, res) => {
         res.status(200).render("games/details", { game, releaseDateFormatted, title: game.title });
     } catch (err) {
         console.error(err);
-        res.status(500).render("error", { error: "Une erreur est survenue.", title: "Erreur" });
+        return res.status(500).render("errors/error", { error: "Une erreur est survenue.", title: "Erreur" });
     }
 });
 
@@ -261,7 +261,7 @@ app.get("/games/:id/edit", async (req, res) => {
         });
 
         if (!game) {
-            return res.status(404).render("error", { error: "Le jeu n'existe pas.", title: "Erreur" });
+            return res.status(404).render("errors/error", { error: "Le jeu n'existe pas.", title: "Erreur" });
         }
 
         const genres = await prisma.genre.findMany({
@@ -269,7 +269,7 @@ app.get("/games/:id/edit", async (req, res) => {
         });
 
         if (!genres) {
-            return res.status(404).render("error", { error: "Le genre n'existe pas.", title: "Erreur" });
+            return res.status(404).render("errors/error", { error: "Le genre n'existe pas.", title: "Erreur" });
         }
 
         const editors = await prisma.editor.findMany({
@@ -277,7 +277,7 @@ app.get("/games/:id/edit", async (req, res) => {
         });
 
         if (!editors) {
-            return res.status(404).render("error", { error: "L'éditeur n'existe pas.", title: "Erreur" });
+            return res.status(404).render("errors/error", { error: "L'éditeur n'existe pas.", title: "Erreur" });
         }
 
         // Formate la date de sortie du jeu en format "YYYY-MM-DD".
@@ -295,7 +295,7 @@ app.get("/games/:id/edit", async (req, res) => {
         });
     } catch (err) {
         console.log(err);
-        res.status(500).render("error", { error: "Une erreur est survenue.", title: "Erreur" });
+        return res.status(500).render("errors/error", { error: "Une erreur est survenue.", title: "Erreur" });
     }
 });
 
@@ -313,7 +313,7 @@ app.put("/games/:id/edit", upload.single('image'), async (req, res) => {
         });
 
         if (!gameExists) {
-            return res.status(404).render("error", { error: "Le jeu n'existe pas.", title: "Erreur" });
+            return res.status(404).render("errors/error", { error: "Le jeu n'existe pas.", title: "Erreur" });
         }
 
         // Vérifie si le genre et l'éditeur existent
@@ -326,7 +326,7 @@ app.put("/games/:id/edit", upload.single('image'), async (req, res) => {
         });
 
         if (!genreExists || !editorExists) {
-            return res.status(404).render("error", { error: "Genre ou éditeur non trouvé.", title: "Erreur" });
+            return res.status(404).render("errors/error", { error: "Genre ou éditeur non trouvé.", title: "Erreur" });
         }
 
         // Si une nouvelle image est téléchargée, on met à jour le chemin de l'image
@@ -369,7 +369,7 @@ app.put("/games/:id/edit", upload.single('image'), async (req, res) => {
         res.status(200).redirect(`/games/${gameId}/details`);
     } catch (error) {
         console.error(error);
-        res.status(500).render("error", { error: "Une erreur est survenue.", title: "Erreur" });
+        return res.status(500).render("errors/error", { error: "Une erreur est survenue.", title: "Erreur" });
     }
 });
 
@@ -406,7 +406,7 @@ app.delete("/games/:id/delete", async (req, res) => {
         res.status(200).redirect("/games");
     } catch (error) {
         console.error(error);
-        res.status(500).render("error", { error: "Une erreur est survenue.", title: "Erreur" });
+        return res.status(500).render("errors/error", { error: "Une erreur est survenue.", title: "Erreur" });
     }
 });
 
@@ -419,7 +419,7 @@ app.get('/genres', async (req, res) => {
         res.render('genres/genres', { genres, title: "Liste des genres" });
     } catch (error) {
         console.error(error);
-        res.status(500).render("error", { error: "Une erreur est survenue.", title: "Erreur" });
+        return res.status(500).render("errors/error", { error: "Une erreur est survenue.", title: "Erreur" });
     }
 });
 
@@ -437,14 +437,14 @@ app.get('/genres/:id/games', async (req, res) => {
         });
 
         if (!genre) {
-            return res.status(404).render("error", {error: "Le genre n'existe pas.", title: "Erreur" });
+            return res.status(404).render("errors/error", {error: "Le genre n'existe pas.", title: "Erreur" });
         }
 
         res.render('genres/games', { genre, title: genre.name });
 
     } catch (error) {
         console.error(error);
-        res.status(500).render("error", { error: "Une erreur est survenue.", title: "Erreur" });
+        return res.status(500).render("errors/error", { error: "Une erreur est survenue.", title: "Erreur" });
     }
 });
 
@@ -460,7 +460,7 @@ app.post('/editors', async (req, res) => {
         res.redirect('/editors');
     } catch (error) {
         console.error(error);
-        res.status(500).render("error", { error: "Une erreur est survenue.", title: "Erreur" });
+        return res.status(500).render("errors/error", { error: "Une erreur est survenue.", title: "Erreur" });
     }
 })
 
@@ -474,7 +474,7 @@ app.get('/editors', async (req, res) => {
         res.status(200).render('editors/editors', { editors, title: "Liste des éditeurs" });
     } catch (error) {
         console.error(error);
-        res.status(500).render("error", { error: "Une erreur est survenue.", title: "Erreur" });
+        return res.status(500).render("errors/error", { error: "Une erreur est survenue.", title: "Erreur" });
     }
 })
 
@@ -485,7 +485,7 @@ app.get('/editors/:id/games', async (req, res) => {
         const editorId = parseInt(req.params.id);
 
         if (!editorId) {
-            return res.status(404).render("error", {error: "L'éditeur n'existe pas.", title: "Erreur" });
+            return res.status(404).render("errors/error", {error: "L'éditeur n'existe pas.", title: "Erreur" });
         }
 
         const editor = await prisma.editor.findUnique({
@@ -494,13 +494,13 @@ app.get('/editors/:id/games', async (req, res) => {
         });
 
         if (!editor) {
-            return res.status(404).render("error", {error: "L'éditeur n'existe pas.", title: "Erreur" });
+            return res.status(404).render("errors/error", {error: "L'éditeur n'existe pas.", title: "Erreur" });
         }
 
         res.render('editors/games', { editor, title: editor.name });
     } catch (error) {
         console.error(error);
-        res.status(500).render("error", { error: "Une erreur est survenue.", title: "Erreur" });
+        return res.status(500).render("errors/error", { error: "Une erreur est survenue.", title: "Erreur" });
     }
 });
 
@@ -523,7 +523,7 @@ app.put('/editors/:id/update', async (req, res) => {
         res.redirect('/editors');
     } catch (error) {
         console.error(error);
-        res.status(500).render("error", { error: "Une erreur est survenue.", title: "Erreur" });
+        return res.status(500).render("errors/error", { error: "Une erreur est survenue.", title: "Erreur" });
     }
 });
 
@@ -544,19 +544,19 @@ app.delete ('/editors/:id/delete', async (req, res) => {
 
     } catch (error) {
         console.error(error);
-        res.status(500).render("error", { error: "Une erreur est survenue.", title: "Erreur" });
+        return res.status(500).render("errors/error", { error: "Une erreur est survenue.", title: "Erreur" });
     }
 });
 
 // Permet de gérer les routes inconnues
 app.get("*", (req, res) => {
-    res.status(404).render("404", {title: "Erreur"});
+    return res.status(404).render("errors/404", {title: "Erreur"});
 })
 
 // Middleware pour gérer les erreurs
 app.use((err, req, res, next) => {
     console.error(err.stack);
-    res.status(500).render("error", { error: "Une erreur est survenue.", title: "Erreur" });
+    return res.status(500).render("errors/error", { error: "Une erreur est survenue.", title: "Erreur" });
 });
 
 startServer()
