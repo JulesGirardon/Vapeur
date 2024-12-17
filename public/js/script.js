@@ -156,3 +156,30 @@ if (addGameLink) {
         setActiveItem(gamesNavItem); // Appliquer l'état actif à l'élément "Jeux"
     });
 }
+
+const backToGenre = document.querySelector('.back-genres');
+
+if (backToGenre) {
+    backToGenre.addEventListener('click', () => {
+        const gamesNavItem = document.getElementById('sidebar-nav-item-genres'); // Récupérer l'élément "Genres"
+        setActiveItem(gamesNavItem); // Appliquer l'état actif à l'élément "Jeux"
+    });
+}
+
+const gameEditor = document.querySelector('.game-editor');
+
+if (gameEditor) {
+    gameEditor.addEventListener('click', () => {
+        const gamesNavItem = document.getElementById('sidebar-nav-item-editors'); // Récupérer l'élément "Editeurs"
+        setActiveItem(gamesNavItem); // Appliquer l'état actif à l'élément "Jeux"
+    });
+}
+
+const gameGenre = document.querySelector('.game-genre');
+
+if (gameGenre) {
+    gameGenre.addEventListener('click', () => {
+        const gamesNavItem = document.getElementById('sidebar-nav-item-genres'); // Récupérer l'élément "Genres"
+        setActiveItem(gamesNavItem); // Appliquer l'état actif à l'élément "Jeux"
+    });
+}

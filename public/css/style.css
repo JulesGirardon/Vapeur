@@ -200,7 +200,8 @@ a {
 
 .list-games .create-game,
 .games-action,
-.back-editors {
+.back-editors,
+.back-genres {
     padding: 15px;
     background: var(--button-gradient);
     background: linear-gradient(135deg, #1e90ff, #00bfff);
