@@ -134,7 +134,7 @@ app.get("/", async (req, res) => {
         res.status(200).render("index", { highlighted_games, title: "Jeux mis en avant" });
     } catch (err) {
         console.error(err);
-        res.status(500).render("errors/error", { error: "Une erreur est survenue.", title: "Erreur" });
+        return res.status(500).render("errors/error", { error: "Une erreur est survenue.", title: "Erreur" });
     }
 });
 
@@ -147,7 +147,7 @@ app.get("/games", async (req, res) => {
         res.status(200).render("games/index", { games, title: "Liste des jeux" });
     } catch (error) {
         console.error(error);
-        res.status(500).render("errors/error", { error: "Une erreur est survenue.", title: "Erreur"});
+        return res.status(500).render("errors/error", { error: "Une erreur est survenue.", title: "Erreur"});
     }
 });
 
@@ -184,7 +184,7 @@ app.post("/games/create", upload.single('image'), async (req, res) => {
         });
 
         if (!genreExists) {
-            throw new Error("Le genre spécifié n'existe pas.");
+            return res.status(404).render("errors/error", { error: "Le genre n'existe pas.", title: "Erreur" });
         }
 
         const editorExists = await prisma.editor.findUnique({
@@ -194,7 +194,7 @@ app.post("/games/create", upload.single('image'), async (req, res) => {
         });
 
         if (!editorExists) {
-            throw new Error("L'éditeur spécifié n'existe pas.");
+            return res.status(404).render("errors/error", { error: "L'éditeur n'existe pas.", title: "Erreur" });
         }
 
         const imagePath = req.file ? path.join('/uploads', req.file.filename) : null;
@@ -494,6 +494,7 @@ app.get('/editors/:id/games', async (req, res) => {
 
         const editor = await prisma.editor.findUnique({
             where: { id: editorId },
+            // Permet de récupérer les informations des jeux "associées"
             include: { games: true }
         });
 
@@ -554,13 +555,7 @@ app.delete ('/editors/:id/delete', async (req, res) => {
 
 // Permet de gérer les routes inconnues
 app.get("*", (req, res) => {
-    return res.status(404).render("errors/404", {title: "Erreur"});
-})
-
-// Middleware pour gérer les erreurs
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    return res.status(500).render("errors/error", { error: "Une erreur est survenue.", title: "Erreur" });
+    return res.status(404).render("errors/error", {error: "Page inconnue !", title: "Erreur"});
 });
 
 startServer()
