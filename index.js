@@ -451,7 +451,6 @@ app.get('/genres/:id/games', async (req, res) => {
 
 // Ajout d'un éditeur : backend
 app.post('/editors', async (req, res) => {
-    res.render('genres/games', { genre, title: genre.name });
     try {
         const { name } = req.body;
         await prisma.editor.create(
